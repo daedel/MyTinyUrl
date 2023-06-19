@@ -7,5 +7,5 @@ class UrlSerializer(ModelSerializer):
 
     class Meta:
         model = TinyUrl
-        fields = ('code',)
+        fields = ('code', 'url')
 
