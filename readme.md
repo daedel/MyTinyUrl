@@ -2,7 +2,7 @@
 # MyTinyUrl 
 
 This projects is my version of app for shorten urls like https://tinyurl.com/app: 
-
+For now this project is using sqlite. If you want to use other DB you have to change settings.py and add another service in docker-compose.yml
 
 # Linux/MacOS
 ## Run Locally 
