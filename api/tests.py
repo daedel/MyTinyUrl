@@ -1,7 +1,6 @@
 import re
 from unittest.mock import patch
 
-from django.http import HttpResponseRedirect
 from django.test import TestCase
 from rest_framework.reverse import reverse
 from rest_framework.status import (
