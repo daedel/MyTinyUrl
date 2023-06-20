@@ -10,3 +10,10 @@ makemigrations:
 
 migrate:
 	docker-compose exec web python manage.py migrate
+
+
+black:
+	docker-compose exec web black .
+
+flake:
+	docker-compose exec web flake8

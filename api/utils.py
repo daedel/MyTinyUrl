@@ -3,8 +3,8 @@ from MyTinyUrl.settings import CONFIG
 
 
 def ensure_https_prefix(url: str) -> str:
-    if not url.startswith('http'):
-        url = f'https://{url}'
+    if not url.startswith("http"):
+        url = f"https://{url}"
     return url
 
 

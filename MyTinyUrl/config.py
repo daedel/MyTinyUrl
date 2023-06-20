@@ -1,4 +1,2 @@
-
-
 class Config:
-    HOST: str = 'localhost:8000'
+    HOST: str = "localhost:8000"
