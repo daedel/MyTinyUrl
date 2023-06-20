@@ -1,36 +1,43 @@
-from django.shortcuts import redirect
-from rest_framework.decorators import api_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
-
-# Create your views here.
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_200_OK
 from rest_framework.generics import get_object_or_404
+from rest_framework.viewsets import ViewSet
 
-from MyTinyUrl.settings import CONFIG
 from api.models import TinyUrl
 from api.serializers import UrlSerializer
-from api.utils import redirect_to_url
+from api.utils import redirect_to_url, generate_url_for_redirection
 
 
-@api_view(['POST'])
-def create_tiny_url(request):
-    """
-        To shorten the url
-    """
-    serializer = UrlSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(f"{CONFIG.HOST}/{serializer.data.get('code')}", HTTP_201_CREATED)
-    return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+class TinyUrlViewSet(ViewSet):
+    lookup_field = 'code'
 
+    @action(methods=['post'], detail=False)
+    def create_tiny_url(self, request):
+        """
+            To shorten the url
+        """
+        serializer = UrlSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(generate_url_for_redirection(serializer.data.get('code', '')), HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-def redirect_from_tiny_url_code(request, code=None):
-    """
-        To shorten the url
-    """
-    if not code:
-        return Response("Bad request", HTTP_400_BAD_REQUEST)
+    @action(detail=True, methods=['get'])
+    def reverse(self, request, code=None):
+        """
+            To shorten the url
+        """
+        tiny_url = get_object_or_404(TinyUrl, code=code)
+        return Response(tiny_url.url, HTTP_200_OK)
 
-    tiny_url = get_object_or_404(TinyUrl, code=code)
-    return redirect_to_url(str(tiny_url.url))
+    @action(detail=False, methods=['get'])
+    def redirect_from_tiny_url_code(self, request, code=None, url_path='tiny_url/(?P<code>[^/[a-z0-9]{5})'):
+        """
+            Endpoint for redirecting when client type in browser shorten url like
+        """
+        if not code:
+            return Response("Bad request", HTTP_400_BAD_REQUEST)
+
+        tiny_url = get_object_or_404(TinyUrl, code=code)
+        return redirect_to_url(str(tiny_url.url))
