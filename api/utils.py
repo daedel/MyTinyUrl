@@ -14,4 +14,4 @@ def redirect_to_url(url: str):
 
 
 def generate_url_for_redirection(code: str) -> str:
-    return f"{CONFIG.HOST} / {code}"
+    return f"{CONFIG.HOST}/{code}"

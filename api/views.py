@@ -1,4 +1,4 @@
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_200_OK
 from rest_framework.generics import get_object_or_404
@@ -31,8 +31,9 @@ class TinyUrlViewSet(ViewSet):
         tiny_url = get_object_or_404(TinyUrl, code=code)
         return Response(tiny_url.url, HTTP_200_OK)
 
-    @action(detail=False, methods=['get'])
-    def redirect_from_tiny_url_code(self, request, code=None, url_path='tiny_url/(?P<code>[^/[a-z0-9]{5})'):
+
+@api_view(['GET'])
+def redirect(request, code=None):
         """
             Endpoint for redirecting when client type in browser shorten url like
         """
